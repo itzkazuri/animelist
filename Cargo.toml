@@ -4,11 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-gtk4 = "0.9"
-gdk4 = "0.9"
-gdk-pixbuf = "0.20"
-gio = "0.20"
-glib = "0.20"        # ← versi 0.20, jangan 0.19
-reqwest = { version = "0.12", features = ["json"] }
+libadwaita = "0.6"
+reqwest = { version = "0.12", features = ["json", "blocking"] }
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.0", features = ["full"] }
+async-channel = "2.3.1"
+libc = "0.2"
+nix = { version = "0.27", features = ["user"] }
