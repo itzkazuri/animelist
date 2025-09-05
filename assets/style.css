@@ -1,0 +1,38 @@
+.character-widget {
+  border-radius: 8px;
+  border: 1px solid alpha(currentColor, 0.2);
+  background-color: @theme_base_color;
+  box-shadow: 0 2px 4px alpha(black, 0.1);
+  transition: box-shadow 0.2s ease;
+  padding: 10px;
+}
+
+.character-widget:hover {
+  box-shadow: 0 4px 8px alpha(black, 0.15);
+}
+
+entry.search-entry {
+  margin: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid alpha(currentColor, 0.2);
+  background-color: @theme_base_color;
+}
+
+button.fetch-button {
+  margin: 10px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: @theme_selected_bg_color;
+  color: @theme_selected_fg_color;
+  border: none;
+  font-weight: bold;
+}
+
+button.fetch-button:hover {
+  background-color: shade(@theme_selected_bg_color, 1.1);
+}
+
+label {
+  color: @theme_fg_color;
+}
