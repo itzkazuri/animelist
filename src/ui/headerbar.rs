@@ -3,9 +3,12 @@ use adw::prelude::*;
 use libadwaita::gtk;
 use gtk::{Box, Orientation, MenuButton, Popover, Button};
 
+
+
 pub struct WaifuHeaderBar {
     container: adw::HeaderBar,
     about_button: Button,
+    
 }
 
 impl WaifuHeaderBar {
@@ -55,4 +58,6 @@ impl WaifuHeaderBar {
             about_callback();
         });
     }
+
+    
 }

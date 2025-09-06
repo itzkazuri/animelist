@@ -1,10 +1,11 @@
-mod api;
-mod models;
-mod ui;
-
 use libadwaita as adw;
 use adw::prelude::*;
-use ui::window::WaifuWindow;
+use glib::Bytes;
+use waifu_viewer::ui::window::WaifuWindow;
+
+mod resources {
+    pub static COMPILED: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/compiled.gresource"));
+}
 
 #[tokio::main]
 async fn main() {
@@ -19,6 +20,11 @@ async fn main() {
     }
 
     adw::init().expect("Failed to initialize Adwaita");
+
+    // Load resources
+    let data = Bytes::from_static(resources::COMPILED);
+    let resource = gio::Resource::from_data(&data).expect("Failed to create resource from data");
+    gio::resources_register(&resource);
 
     let app = adw::Application::builder()
         .application_id("com.example.WaifuViewer")

@@ -1,4 +1,9 @@
-pub mod character_widget;
 pub mod window;
 pub mod headerbar;
 pub mod content;
+pub mod character_widget;
+pub mod dialogs;
+pub mod handlers;
+pub mod components;
+pub mod utils;
+pub mod pages;

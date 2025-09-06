@@ -1,7 +1,7 @@
-
-use libadwaita::gtk::{self, gdk_pixbuf, glib, prelude::*, Box, Image, Label, Orientation};
+use libadwaita::gtk::{self, gdk_pixbuf, glib, prelude::*, Box, Image, Label, Orientation, Button};
 
 use crate::models::character::Character;
+use crate::storage::favorites::FavoritesStorage;
 use async_channel;
 use std::io::Cursor;
 
@@ -11,6 +11,16 @@ pub struct CharacterWidget {
 
 impl CharacterWidget {
     pub fn new(character: Character) -> Self {
+        Self::new_with_options(character, false, || {})
+    }
+
+    pub fn new_with_delete_callback<F>(character: Character, delete_callback: F) -> Self 
+    where F: Fn() + 'static + Clone {
+        Self::new_with_options(character, true, delete_callback)
+    }
+
+    fn new_with_options<F>(character: Character, show_delete: bool, delete_callback: F) -> Self 
+    where F: Fn() + 'static + Clone {
         // Create the main container with fixed size
         let widget = Box::builder()
             .orientation(Orientation::Vertical)
@@ -25,7 +35,7 @@ impl CharacterWidget {
 
         // Create image widget with placeholder
         let image = Image::builder()
-            .icon_name("image-x-generic") // Default placeholder from Adwaita
+            .icon_name("image-missing") // Default placeholder from Adwaita
             .pixel_size(48)
             .halign(gtk::Align::Center)
             .valign(gtk::Align::Start)
@@ -136,6 +146,61 @@ impl CharacterWidget {
         // Add widgets to container
         widget.append(&image);
         widget.append(&name_label);
+
+        // Create button container
+        let button_box = Box::builder()
+            .orientation(Orientation::Horizontal)
+            .spacing(10)
+            .halign(gtk::Align::Center)
+            .build();
+
+        // Create favorite button
+        let favorite_button = Button::builder()
+            .icon_name("add-symbolic")
+            .tooltip_text("Add to favorites")
+            .build();
+
+        // Handle favorite button click
+        let character_clone = character.clone();
+        favorite_button.connect_clicked(move |_| {
+            let storage = FavoritesStorage::new();
+            let character_clone = character_clone.clone();
+            glib::MainContext::default().spawn_local(async move {
+                if let Err(e) = storage.add_favorite(character_clone).await {
+                    eprintln!("Failed to add favorite: {}", e);
+                }
+            });
+        });
+
+        button_box.append(&favorite_button);
+
+        // Add delete button only if requested (for favorites page)
+        if show_delete {
+            let delete_button = Button::builder()
+                .icon_name("user-trash-symbolic")
+                .tooltip_text("Remove from favorites")
+                .build();
+
+            let character_clone = character.clone();
+            let delete_callback_clone = delete_callback.clone();
+            delete_button.connect_clicked(move |_| {
+                let storage = FavoritesStorage::new();
+                let character_clone = character_clone.clone();
+                let delete_callback_clone = delete_callback_clone.clone();
+                glib::MainContext::default().spawn_local(async move {
+                    if let Err(e) = storage.remove_favorite(character_clone).await {
+                        eprintln!("Failed to remove favorite: {}", e);
+                    } else {
+                        // Call the callback to refresh the favorites page
+                        delete_callback_clone();
+                    }
+                });
+            });
+
+            button_box.append(&delete_button);
+        }
+
+        widget.append(&button_box);
 
         Self { widget }
     }

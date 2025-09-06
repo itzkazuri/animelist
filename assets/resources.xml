@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/example/WaifuViewer">
+    <file alias="icons/add.svg">icons/add.svg</file>
+    <file alias="icons/ibuki.png">icons/ibuki.png</file>
+    <file alias="icons/masha.png">icons/masha.png</file>
+  </gresource>
+</gresources>
